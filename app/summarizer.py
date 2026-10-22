@@ -3,10 +3,6 @@ import json
 from dotenv import load_dotenv
 from openai import OpenAI
 
-load_dotenv(override=True)
-
-client = OpenAI()
-
 SYSTEM_PROMPT = """
 You are a helpful assistant that analyzes YouTube video transcripts
 and produces clear, structured summaries.
@@ -58,6 +54,9 @@ TIMESTAMPS:
 
 
 def summarize_transcript(subs: list[dict]) -> str:
+    load_dotenv()
+
+    client = OpenAI()
     transcript_json = json.dumps(subs, ensure_ascii=False)
 
     response = client.responses.create(
@@ -67,7 +66,14 @@ def summarize_transcript(subs: list[dict]) -> str:
         input=f"{USER_PROMPT}\n\n<transcript>\n{transcript_json}\n</transcript>",
     )
 
-    print(f"Input tokens: {response.usage.input_tokens}")
-    print(f"Output tokens: {response.usage.output_tokens}")
-    print(f"Total tokens: {response.usage.total_tokens}")
-    return response.output_text
+    summary = response.output_text
+
+    if not summary.strip():
+        raise ValueError("OpenAI returned an empty summary")
+
+    if response.usage is not None:
+        print(f"Input tokens: {response.usage.input_tokens}")
+        print(f"Output tokens: {response.usage.output_tokens}")
+        print(f"Total tokens: {response.usage.total_tokens}")
+
+    return summary
