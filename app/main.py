@@ -7,7 +7,6 @@ from app.slugify import slugify_text
 from app.summarizer import summarize_transcript
 from app.title_extraction import get_video_title
 
-vid_id: str = ""
 
 def generate_summary(video_id: str) -> Path:
     transcript = YouTubeTranscriptApi().fetch(video_id)
@@ -23,11 +22,7 @@ def generate_summary(video_id: str) -> Path:
     file_path = output_dir / f"{filename}.md"
 
     content = (
-        f"**Video:** {metadata.title}\n"
-        f"**Channel:** {metadata.author}\n"
-        f"**Source:** {metadata.url}\n\n"
-        f"---\n\n"
-        f"{summary}\n"
+        f"**Video:** {metadata.title}\n**Channel:** {metadata.author}\n**Source:** {metadata.url}\n\n---\n\n{summary}\n"
     )
 
     file_path.write_text(content, encoding="utf-8")
@@ -40,29 +35,7 @@ def main() -> None:
         raise SystemExit("Usage: python -m app.main <video_id>")
 
     video_id = sys.argv[1]
-
-    # Fetch the transcript and video metadata
-    yttp_api = YouTubeTranscriptApi()
-    transcript = yttp_api.fetch(video_id)
-    metadata = get_video_title(video_id)
-
-    # Generate the summary
-    summary = summarize_transcript(transcript.to_raw_data())
-
-    # Prepare output path
-    filename = slugify_text(metadata.title)[:100] or video_id
-
-    output_dir = Path("output")
-    output_dir.mkdir(exist_ok=True)
-
-    file_path = output_dir / f"{filename}.md"
-
-    # Save Markdown
-    content = (
-        f"**Video:** {metadata.title}\n**Channel:** {metadata.author}\n**Source:** {metadata.url}\n\n---\n\n{summary}\n"
-    )
-
-    file_path.write_text(content, encoding="utf-8")
+    file_path = generate_summary(video_id)
 
     print(f"Saved to: {file_path.resolve()}")
 
