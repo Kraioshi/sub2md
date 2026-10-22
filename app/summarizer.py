@@ -1,4 +1,5 @@
 import json
+
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -63,8 +64,7 @@ def summarize_transcript(subs: list[dict]) -> str:
         model="gpt-4.1-mini",
         temperature=0.2,
         instructions=SYSTEM_PROMPT,
-        input=f"{USER_PROMPT}\n\n"
-              f"<transcript>\n{transcript_json}\n</transcript>"
+        input=f"{USER_PROMPT}\n\n<transcript>\n{transcript_json}\n</transcript>",
     )
 
     print(f"Input tokens: {response.usage.input_tokens}")

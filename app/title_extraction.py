@@ -1,5 +1,7 @@
 import httpx
+
 from app.title_schema import TitleResponse
+
 
 def get_video_title(video_id: str) -> TitleResponse:
     response = httpx.get(
@@ -17,4 +19,3 @@ def get_video_title(video_id: str) -> TitleResponse:
         author=data["author_name"],
         url=f"https://www.youtube.com/watch?v={video_id}",
     )
-

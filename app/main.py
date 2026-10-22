@@ -1,13 +1,14 @@
 import sys
 from pathlib import Path
 
-from app.summarizer import summarize_transcript
 from title_extraction import get_video_title
-from app.slugify import slugify_text
-
 from youtube_transcript_api import YouTubeTranscriptApi
 
+from app.slugify import slugify_text
+from app.summarizer import summarize_transcript
+
 vid_id: str = ""
+
 
 def main() -> None:
     if len(sys.argv) != 2:
@@ -33,11 +34,7 @@ def main() -> None:
 
     # Save Markdown
     content = (
-        f"**Video:** {metadata.title}\n"
-        f"**Channel:** {metadata.author}\n"
-        f"**Source:** {metadata.url}\n\n"
-        f"---\n\n"
-        f"{summary}\n"
+        f"**Video:** {metadata.title}\n**Channel:** {metadata.author}\n**Source:** {metadata.url}\n\n---\n\n{summary}\n"
     )
 
     file_path.write_text(content, encoding="utf-8")
