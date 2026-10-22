@@ -1,9 +1,9 @@
 import httpx
 
-from app.title_schema import TitleResponse
+from app.models import VideoMetadata
 
 
-def get_video_title(video_id: str) -> TitleResponse:
+def get_video_title(video_id: str) -> VideoMetadata:
     video_url = f"https://www.youtube.com/watch?v={video_id}"
 
     response = httpx.get(
@@ -15,7 +15,7 @@ def get_video_title(video_id: str) -> TitleResponse:
 
     data = response.json()
 
-    return TitleResponse(
+    return VideoMetadata(
         title=data["title"],
         author=data["author_name"],
         url=video_url,
