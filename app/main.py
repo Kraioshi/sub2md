@@ -1,9 +1,9 @@
 import sys
 from pathlib import Path
 
+from slugify import slugify
 from youtube_transcript_api import YouTubeTranscriptApi
 
-from app.slugify import slugify_text
 from app.summarizer import summarize_transcript
 from app.title_extraction import get_video_title
 
@@ -14,7 +14,15 @@ def generate_summary(video_id: str) -> Path:
 
     summary = summarize_transcript(transcript.to_raw_data())
 
-    filename = slugify_text(metadata.title)[:100] or video_id
+    filename = (
+        slugify(
+            metadata.title,
+            max_length=100,
+            word_boundary=True,
+            algorithm="modern",
+        )
+        or video_id
+    )
 
     output_dir = Path("output")
     output_dir.mkdir(parents=True, exist_ok=True)
